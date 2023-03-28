@@ -1,4 +1,3 @@
-import { request } from "express";
 import { openDB } from "idb";
 
 const initdb = async () =>
@@ -16,10 +15,10 @@ const initdb = async () =>
 // TODO: Add logic to a method that accepts some content and adds it to the database
 export const putDb = async (content) => {
   // find the correct Database and read the data
-  const jateDb = await openDB("jaet", 1);
+  const jateDb = await openDB("jate", 1);
   const tr = jateDb.transaction("jate", "readwrite");
   const storage = tr.objectStore("jate");
-  const req = storage.put({ content: content });
+  const req = storage.put({ id: 1, value: content });
   const res = await req;
   return res;
 
@@ -31,9 +30,9 @@ export const getDb = async () => {
   const jateDb = await openDB("jate", 1);
   const tr = jateDb.transaction("jate", "readonly");
   const storage = tr.objectStore("jate");
-  const req = storage.getAll();
+  const req = storage.get(1);
   const res = await req;
-  return res;
+  return res?.value;
 };
 
 initdb();
