@@ -1,32 +1,38 @@
+// requires plugins
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 const path = require("path");
 const { InjectManifest } = require("workbox-webpack-plugin");
 
-// TODO: Add and configure workbox plugins for a service worker and manifest file.
-// TODO: Add CSS loaders and babel to webpack.
-
 module.exports = () => {
   return {
+    // sets mode to devlopment
     mode: "development",
+    // starts at index.js
     entry: {
       main: "./src/js/index.js",
+      // why
       install: "./src/js/install.js",
     },
     output: {
+      // sets directory and sets name for bundle
       filename: "[name].bundle.js",
       path: path.resolve(__dirname, "dist"),
     },
     plugins: [
+      // pulls info from the index.html as a template
       new HtmlWebpackPlugin({
         template: "./index.html",
         title: "JATE",
       }),
+      // injects service worker
       new InjectManifest({
         swSrc: "./src-sw.js",
         swDest: "src-sw.js",
       }),
+      // sets the webpack manifest, sets meta-data for the download
       new WebpackPwaManifest({
+        // why would setting this true cahce for longer?
         fingerprints: false,
         inject: true,
         name: "Just Another Text Editor",
@@ -37,6 +43,7 @@ module.exports = () => {
         publicPath: "./",
         icons: [
           {
+            // grabs images and sets their sizes
             src: path.resolve("src/images/logo.png"),
             sizes: [96, 128, 192, 256, 384, 512],
             destination: path.join("assets", "icons"),
@@ -48,10 +55,12 @@ module.exports = () => {
     module: {
       rules: [
         {
+          // calls css and sets style loader
           test: /\.css$/i,
           use: ["style-loader", "css-loader"],
         },
         {
+          // calls babel
           test: /\.m?js$/,
           exclude: /node_modules/,
           use: {
